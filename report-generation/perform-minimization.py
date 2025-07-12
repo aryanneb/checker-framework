@@ -7,7 +7,9 @@ import config
 #update these absolute paths for your environment
 JDK_REPO_PATH = config.JDK_REPO_PATH
 CHECKER_FRAMEWORK_REPO_PATH = config.CHECKER_FRAMEWORK_REPO_PATH
-RESULTS_BASE_DIR = config.RESULTS_BASE_DIR
+script_dir = os.path.dirname(os.path.realpath(__file__))
+RESULTS_BASE_DIR = os.path.join(script_dir, "results")
+os.makedirs(RESULTS_BASE_DIR, exist_ok=True)
 
 if platform.system() == "Windows":
     gradle_task_cmd  = ["cmd", "/c", "gradlew.bat", "copyAndMinimizeAnnotatedJdkFiles"]
@@ -51,7 +53,7 @@ branches = [line.split("\t")[1].replace("refs/heads/", "")
             for line in result.stdout.splitlines() if line.strip()]
 
 #processing
-for jdk_version in branches:
+for jdk_version in branches[::-1]:
     print(f"\nprocessing version: {jdk_version}")
 
     # Checkout the branch and reset to the remote version
