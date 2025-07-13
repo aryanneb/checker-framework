@@ -863,7 +863,17 @@ public class AnnotationFileElementTypes {
      * @return a JarURLConnection to "/jdk*"
      */
     private JarURLConnection getJarURLConnectionToJdk() {
-        URL resourceURL = atypeFactory.getClass().getResource("/annotated-jdk");
+        URL resourceURL =
+                atypeFactory.getClass().getResource("/annotated-jdk/java/lang/Object.java");
+        if (resourceURL == null) {
+            resourceURL = atypeFactory.getClass().getResource("/annotated-jdk");
+        }
+
+        if (resourceURL == null) {
+            throw new BugInCF(
+                    "Could not find annotated JDK for " + atypeFactory.getClass().getSimpleName());
+        }
+
         JarURLConnection connection;
         try {
             connection = (JarURLConnection) resourceURL.openConnection();
@@ -889,6 +899,11 @@ public class AnnotationFileElementTypes {
             return;
         }
         URL resourceURL = atypeFactory.getClass().getResource("/annotated-jdk");
+        if (resourceURL == null) {
+            resourceURL =
+                    atypeFactory.getClass().getResource("/annotated-jdk/java/lang/Object.java");
+        }
+
         if (stubDebug) {
             System.out.printf(
                     "Loading JDK from class %s and url: %s%n",
@@ -901,7 +916,7 @@ public class AnnotationFileElementTypes {
             throw new BugInCF(
                     "JDK not found for type factory " + atypeFactory.getClass().getSimpleName());
         } else if (resourceURL.getProtocol().contentEquals("jar")) {
-            prepJdkFromJar(resourceURL);
+            prepJdkFromJar();
         } else if (resourceURL.getProtocol().contentEquals("file")) {
             prepJdkFromFile(resourceURL);
         } else {
@@ -978,7 +993,7 @@ public class AnnotationFileElementTypes {
      *
      * @param jdkJarfile the URL pointing to the JDK jarfile
      */
-    private void prepJdkFromJar(@SuppressWarnings("UnusedVariable") URL jdkJarfile) {
+    private void prepJdkFromJar() {
         JarURLConnection connection = getJarURLConnectionToJdk();
 
         try (JarFile jarFile = connection.getJarFile()) {
