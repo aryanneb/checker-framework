@@ -990,7 +990,6 @@ public class AnnotationFileElementTypes {
     /**
      * Walk through the JDK directory and create a mapping, {@link #remainingJdkStubFilesJar}, from
      * file name to the class contained with in it. Also, parses all package-info.java files.
-     *
      */
     private void prepJdkFromJar() {
         JarURLConnection connection = getJarURLConnectionToJdk();
